@@ -9,6 +9,7 @@
 use std::path::Path;
 use std::fs::File;
 use serde::Deserialize;
+use std::process::Command;
 
 #[derive(Debug, Deserialize)]
 
@@ -26,9 +27,23 @@ fn main() {
     let json_file_path="import.json";
     let file = File::open(json_file_path).expect("file not found");
     let tracks:Vec<Track> = serde_json::from_reader(file).expect("error while reading");
-
+    
     for entry in tracks {
-        println!("Attempting to generate mp3 for {}", entry.title);
+      
+        println!("link is {}",entry.link);
+             
+        let status = Command::new("/bin/youtube-dl").arg("-x").arg("--audio-format").arg("mp3").arg("-o").arg("%(title)s.%(ext)s")
+                            .arg(entry.link)
+                            .status()
+                            .expect("failed to execute process");
+
+        println!("process finished with: {status}");
+
+        assert!(status.success());
+        
+
     }
+
+
     println!("Program Completed");
 }
