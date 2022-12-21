@@ -11,6 +11,8 @@ use std::fs::File;
 use serde::Deserialize;
 use std::process::Command;
 
+//arg("%(title)s.%(ext)s")
+
 #[derive(Debug, Deserialize)]
 
 struct Track{
@@ -31,8 +33,9 @@ fn main() {
     for entry in tracks {
       
         println!("link is {}",entry.link);
+        let t = &entry.title;
              
-        let status = Command::new("/bin/youtube-dl").arg("-x").arg("--audio-format").arg("mp3").arg("-o").arg("%(title)s.%(ext)s")
+        let status = Command::new("/bin/youtube-dl").arg("-x").arg("--audio-format").arg("mp3").arg("-o").arg("%(".to_owned() + "title" + ")s.%(ext)s").arg("--restrict-filenames")
                             .arg(entry.link)
                             .status()
                             .expect("failed to execute process");
